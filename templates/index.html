@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ML Project</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
+  </head>
+  <link href="https://css.gg/software-upload.css" rel="stylesheet" />
+  <link
+    href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
+    rel="stylesheet"
+  />
+  <body>
+    <section class="section">
+      <div class="container">
+        <!--  -->
+        <div
+          class="
+            is-flex
+            is-flex-direction-column
+            is-justify-content-center
+            is-align-items-center
+          "
+        >
+          <h1 class="title">Image to Delivery Invoice Maker</h1>
+          <form action="/" method="POST" enctype="multipart/form-data">
+            <div class="file is-warning is-boxed">
+              <label class="file-label">
+                <input class="file-input" type="file" name="sample_image" />
+                <span class="file-cta">
+                  <span class="file-icon">
+                    <i class="gg-software-upload"></i>
+                  </span>
+                  <span class="file-label"> Upload Image </span>
+                </span>
+              </label>
+            </div>
+            <div class="is-flex is-justify-content-center">
+              <button class="button is-primary my-3" type="submit">
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
+        <!--  -->
+
+        <div class="grid grid-cols-2">
+          <div>
+            <p class="text-center font-bold my-2">Input Image</p>
+            <div class="is-flex is-justify-content-center my-2">
+              {% if context.img | length == 0%}
+              <p class="text-xl font-bold opacity-60 text-center my-4">
+                Please Upload Image To Continue
+              </p>
+              {% endif %}
+              <img src="{{context.img}}" alt="" class="h-96" />
+            </div>
+          </div>
+
+          {% if context.invoice != undefined%}
+          <div id="delivery-invoice">
+            <div class="max-w-lg border mx-auto my-6 p-4 shadow-xl">
+              <p
+                class="
+                  cols-span-full
+                  text-center text-xl
+                  font-semibold
+                  my-4
+                  py-2
+                "
+              >
+                Delivery Invoice
+              </p>
+
+              <table class="table-fixed">
+                <thead>
+                  <tr>
+                    <th class="w-5/12">Product</th>
+                    <th class="w-3/12">Quantity</th>
+                    <th class="w-3/12">Price</th>
+                    <th class="w-3/12">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for i in context.invoice.products %}
+                  <tr>
+                    <td>{{i.name}}</td>
+                    <td>₹{{i.price}}</td>
+                    <td>{{i.qty}}</td>
+                    <td>₹{{i.total}}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <p class="font-bold py-2">
+                Total Amount = ₹{{context.invoice.delivery_total}}
+              </p>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+
+        {% if context.predictions | length > 1%}
+        <p class="text-center text-lg font-bold my-6">Predictions</p>
+        {% endif %}
+
+        <div class="flex flex-wrap my-5 space-x-4">
+          {% for segmentation in context.predictions %}
+          <div class="shadow-xl rounded-xl p-3">
+            <img src="{{segmentation['image']}}" alt="" />
+            <p class="text-center text-xs font-light">Prediction</p>
+            <p class="text-center font-bold">{{segmentation['prediction']}}</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
